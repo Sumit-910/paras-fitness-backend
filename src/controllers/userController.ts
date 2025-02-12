@@ -11,7 +11,7 @@ const getAllUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=
         const [getAlluser]:any=await sequelize.query("select * from users");
 
         if(!getAlluser){
-            return res.status(404).json({message:"Error while getting all the users"});
+            return res.status(404).json({message:"No Data To Show in Users"});
         }
 
         return res.status(200).json(getAlluser);
@@ -74,7 +74,7 @@ const loginUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>
             return res.json({message:"Invalid Credentials"});
         }
 
-        const token=jwt.sign({email:correctEmail[0].email},process.env.JWT_SECRET!,{expiresIn:'8h'});
+        const token=jwt.sign({id:correctEmail[0].user_id,email:correctEmail[0].email},process.env.JWT_SECRET!,{expiresIn:'8h'});
 
         return res.json({message:"log in succesfully",token:token});
 
