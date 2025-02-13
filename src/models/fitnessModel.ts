@@ -39,6 +39,7 @@ const FitnessGoal = sequelize.define('FitnessGoal', {
   status: {
     type: DataTypes.ENUM("pending","complete","incomplete"),
     allowNull: false,
+    defaultValue:"pending"
   },
 }, {
   tableName: 'fitness_goals',

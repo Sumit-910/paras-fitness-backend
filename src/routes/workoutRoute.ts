@@ -9,8 +9,8 @@ const workRoute=Router();
 workRoute.get('/all/workouts',[],workController.getAllWorkoutByAll);
 workRoute.get('/workouts',[authorisation],workController.getAllWorkoutByUser);
 workRoute.post("/workouts",[authorisation],workController.createWorkout);
-workRoute.get("/workouts/:id",[],workController.getSingleWokout);
+workRoute.get("/workouts/:workout_id",[],workController.getSingleWorkout);
 workRoute.patch("/workouts",[authorisation],workController.updateWorkout);
-workRoute.delete("/users",[],workController.deleteUser);
+workRoute.delete("/workouts",[authorisation],workController.deleteWorkout);
 
 export default workRoute;
