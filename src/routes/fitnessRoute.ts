@@ -10,6 +10,6 @@ fitnessRoute.get('/goals',[authorisation],fitnessController.getAllFitnessGoals);
 fitnessRoute.post('/goals',[authorisation],fitnessController.createFitnessGoal);
 fitnessRoute.patch("/goals",[],fitnessController.updateFitnessGoal);
 fitnessRoute.get("/goals/:goal_id",[],fitnessController.getSingleFitnessGoal);
-fitnessRoute.delete("/goals",[],fitnessController.deleteFitnessGoal);
+fitnessRoute.delete("/goals/:id",[],fitnessController.deleteFitnessGoal);
 
 export default fitnessRoute;

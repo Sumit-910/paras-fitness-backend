@@ -28,6 +28,8 @@ const signupUSer=async(req:Request,res:Response,next:NextFunction):Promise<any>=
             return res.json({message:"Enter All The Fields"});
         }
 
+        console.log("kya data aya ",req.body);
+
         const [existingUser]:any=await sequelize.query("select * from users where email = ?",{
             replacements: [email]
         })
@@ -47,7 +49,7 @@ const signupUSer=async(req:Request,res:Response,next:NextFunction):Promise<any>=
             return res.json({message:"Error while inserting the user in users"});
         }
 
-        return res.status(200).json({message:"Person Added Successfully"});
+        return res.json({status:200,message:"Person Added Successfully"});
     } catch (error) {
         next(error);
     }
@@ -76,7 +78,7 @@ const loginUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>
 
         const token=jwt.sign({id:correctEmail[0].user_id,email:correctEmail[0].email},process.env.JWT_SECRET!,{expiresIn:'8h'});
 
-        return res.json({message:"log in succesfully",token:token});
+        return res.json({status:200,message:"log in succesfully",token:token,user:correctEmail});
 
     } catch (error) {
         

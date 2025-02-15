@@ -28,6 +28,7 @@ const getAllFitnessGoals = async (req: Request, res: Response, next: NextFunctio
 const createFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         console.log("aya ??")
+        console.log("body ",req.body);
         const { id } = req.body.auth;
 
         const { goal_type, target_value, current_progress, start_date, end_date } = req.body;
@@ -35,6 +36,8 @@ const createFitnessGoal = async (req: Request, res: Response, next: NextFunction
         if(!goal_type || !target_value || !current_progress || !start_date || !end_date){
             return res.status(400).json({ message: "Enter All The Fields" });
         }
+
+        console.log("allo ok ??")
         
         const[insertFitness]=await sequelize.query("INSERT INTO fitness_goals (user_id, goal_type, target_value, current_progress, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)", { replacements: [id, goal_type, target_value, current_progress, start_date, end_date] });
 
@@ -66,6 +69,8 @@ const getSingleFitnessGoal = async (req: Request, res: Response, next: NextFunct
 const updateFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
 
+        console.log("body ",req.body);
+
         const { goal_id, target_value, current_progress, status } = req.body;
 
         if(!goal_id || !target_value || !current_progress || !status){
@@ -82,7 +87,11 @@ const updateFitnessGoal = async (req: Request, res: Response, next: NextFunction
 
 const deleteFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const { id } = req.body;
+        const { id } = req.params;
+
+        console.log("body req ",req.body);
+
+        console.log("id aya ",id);
 
         if(!id){
             return res.status(400).json({ message: "Enter All The Fields" });

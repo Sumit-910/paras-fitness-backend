@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import sequelize from "../db";
+import { format } from "date-fns";
 
 const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
@@ -23,8 +24,11 @@ const getAllWorkoutByUser = async (req: Request, res: Response, next: NextFuncti
             replacements: [id]
         });
 
-        if (!getAllWorkoutByUser.length) {
-            return res.status(404).json({ message: "No Data To Show in Workouts By User" });
+        console.log("getAllWorkoutByUser",getAllWorkoutByUser);
+
+        if (getAllWorkoutByUser.length==0) {
+            console.log("andar aya? ")
+            return res.json({ status:404,message: "No Data To Show in Workouts By User" });
         }
 
         return res.status(200).json(getAllWorkoutByUser);
@@ -54,7 +58,7 @@ const createWorkout = async (req: Request, res: Response, next: NextFunction): P
             replacements: [id, exercise_type, duration, calories_burned, workout_date]
         });
 
-        return res.status(201).json({ message: "Workout Added Successfully" });
+        return res.status(201).json({ status:200,message: "Workout Added Successfully" });
     } catch (error) {
         next(error);
     }
@@ -88,15 +92,23 @@ const getSingleWorkout = async (req: Request, res: Response, next: NextFunction)
 
 const updateWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+        console.log("kiuch aya ");
+
         const { id } = req.body.auth;
         const { workout_id, exercise_type, duration, calories_burned, workout_date } = req.body;
+
+        console.log("body ",req.body);
 
         if (!workout_id || !exercise_type || !duration || !calories_burned || !workout_date) {
             return res.status(400).json({ message: "Enter All The Fields" });
         }
 
+        console.log("passed test")
+
+        const formattedDate = format(new Date(workout_date), "yyyy-MM-dd");
+
         await sequelize.query("UPDATE workouts SET exercise_type = ?, duration = ?, calories_burned = ?, workout_date = ? WHERE user_id = ? AND workout_id = ?", {
-            replacements: [exercise_type, duration, calories_burned, workout_date, id, workout_id]
+            replacements: [exercise_type, duration, calories_burned, formattedDate, id, workout_id]
         });
 
         return res.status(200).json({ message: "Workout Updated Successfully" });
@@ -118,7 +130,7 @@ const deleteWorkout = async (req: Request, res: Response, next: NextFunction): P
             replacements: [id, workout_id]
         });
 
-        return res.status(200).json({ message: "Workout Deleted Successfully" });
+        return res.status(200).json({ status:200,message: "Workout Deleted Successfully" });
     } catch (error) {
         next(error);
     }

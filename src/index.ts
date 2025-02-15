@@ -3,9 +3,13 @@ import { Express } from 'express';
 import router from './routes/index';
 import sequelize from './db/index';
 import syncTables from './models/syncModels';
+import { Request } from "express";
+import cors from "cors";
 
 const app: Express = express();
-const port = 6000;
+const port = 3000;
+
+app.use(cors({ origin: '*' }));
 
 app.use(express.json());
 app.use('/', router);
