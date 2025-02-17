@@ -1,10 +1,14 @@
-import { Sequelize } from 'sequelize';
+import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
 
-const sequelize = new Sequelize('fitness_tracker', 'root', 'Pa1ra2@3',
-  {
-    host: '127.0.0.1',
-    dialect: 'mysql',
-  }
-);
+dotenv.config();
 
-export default sequelize;
+const sequelize = new Sequelize(
+    process.env.MYSQL_DATABASE || '', 
+    process.env.MYSQL_NAME || '', 
+    process.env.MYSQL_PASSWORD, {
+    host:process.env.MYSQL_HOST,
+    dialect:'mysql'
+  });
+
+  export default sequelize

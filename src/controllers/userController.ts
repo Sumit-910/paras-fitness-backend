@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { UserRespository } from "../repository";
+import * as UserRespository from "../repository/UserRepository"
 dotenv.config();
 
 export const getAllUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {

@@ -1,4 +1,3 @@
-// feedbackController.ts
 import { Request, Response, NextFunction } from "express";
 import * as IssueRepo from "../repository/IssueRepo";
 

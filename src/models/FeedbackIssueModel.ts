@@ -25,7 +25,7 @@ const FeedbackIssue = sequelize.define('FeedbackIssue', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM('pending','resolved'),
+    type: DataTypes.ENUM('complete','pending','resolved'),
     allowNull: false,
   },
 }, {
