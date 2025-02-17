@@ -88,7 +88,7 @@ userRoute.post("/auth/login", [], userController.loginUser);
  *       500:
  *         description: Internal server error
  */
-userRoute.post("/auth/signup", [], userController.signupUSer);
+userRoute.post("/auth/signup", [], userController.signupUser);
 
 /**
  * @swagger

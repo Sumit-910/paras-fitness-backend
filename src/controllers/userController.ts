@@ -1,174 +1,131 @@
-import { Request,Response,NextFunction } from "express";
-import sequelize from "../db";
-import bcrypt from 'bcryptjs';
-import jwt from "jsonwebtoken"
+import { Request, Response, NextFunction } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import { UserRespository } from "../repository";
 dotenv.config();
 
-const getAllUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
+export const getAllUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const [getAlluser]:any=await sequelize.query("select * from users");
-
-        if(!getAlluser){
-            return res.status(404).json({message:"No Data To Show in Users"});
+        const users = await UserRespository.getAllUsers();
+        if (!users.length) {
+            return res.status(404).json({ message: "No Data To Show in Users" });
         }
-
-        return res.status(200).json(getAlluser);
+        return res.status(200).json(users);
     } catch (error) {
         next(error);
     }
-}  
+};
 
-const signupUSer=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
+export const signupUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const {name,email,password,phone,address}=req.body;
-
-        if(!name || !email || !password || !phone || !address){
-            return res.json({message:"Enter All The Fields"});
+        const { name, email, password, phone, address } = req.body;
+        if (!name || !email || !password || !phone || !address) {
+            return res.json({ message: "Enter All The Fields" });
         }
 
-        console.log("kya data aya ",req.body);
-
-        const [existingUser]:any=await sequelize.query("select * from users where email = ?",{
-            replacements: [email]
-        })
-
-        if(existingUser.length>0){
-            return res.json({message:"User with this email already exists"});
+        const existingUser = await UserRespository.getUserByEmail(email);
+        if (existingUser.length > 0) {
+            return res.json({ message: "User with this email already exists" });
         }
 
-        const salt=bcrypt.genSaltSync(10);
-        const hashed_password=bcrypt.hashSync(password,salt);
+        const salt = bcrypt.genSaltSync(10);
+        const hashed_password = bcrypt.hashSync(password, salt);
 
-        const [insertUser]:any=await sequelize.query("insert into users (name,email,password,phone,address) values (?,?,?,?,?)",{
-            replacements:[name,email,hashed_password,phone,address]
-        })
-
-        if(!insertUser){
-            return res.json({message:"Error while inserting the user in users"});
-        }
-
-        return res.json({status:200,message:"Person Added Successfully"});
+        await UserRespository.insertUser(name, email, hashed_password, phone, address);
+        return res.json({ status: 200, message: "Person Added Successfully" });
     } catch (error) {
         next(error);
     }
-}  
+};
 
-const loginUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
+export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const {email,password}=req.body;
-
-        if(!email || !password){
-            return res.json({message:"Enter All The Fields"});
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.json({ message: "Enter All The Fields" });
         }
 
-        const [correctEmail]:any=await sequelize.query("select * from users where email=?",{
-            replacements:[email]
-        })
-
-        if(correctEmail.length==0){
-            return res.json({message:"Enter Correct Email"});
+        const user:any = await UserRespository.getUserByEmail(email);
+        if (user.length === 0) {
+            return res.json({ message: "Enter Correct Email" });
         }
 
-        const validPassword = await bcrypt.compare(password, correctEmail[0].password);
+        const validPassword = await bcrypt.compare(password, user[0].password);
         if (!validPassword) {
-            return res.json({message:"Invalid Credentials"});
+            return res.json({ message: "Invalid Credentials" });
         }
 
-        const token=jwt.sign({id:correctEmail[0].user_id,email:correctEmail[0].email},process.env.JWT_SECRET!,{expiresIn:'8h'});
+        const token = jwt.sign(
+            { id: user[0].user_id, email: user[0].email },
+            process.env.JWT_SECRET!,
+            { expiresIn: "8h" }
+        );
 
-        return res.json({status:200,message:"log in succesfully",token:token,user:correctEmail});
-
-    } catch (error) {
-        
-    }
-}  
-
-const getSingleUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
-    try {
-        const id=req.params.id;
-
-        if(!id){
-            return res.json({message:"Id is not sent in URL"});
-        }
-
-        const [singleUser]=await sequelize.query('select * from users where user_id=?',{
-            replacements:[id]
-        })
-
-        if(singleUser.length==0){
-            return res.json({message:"user was not found with given id"});
-        }
-
-        return res.status(200).json(singleUser);
+        return res.json({ status: 200, message: "Log in successfully", token, user });
     } catch (error) {
         next(error);
     }
-    return res.status(200).json({message:"ok"});
-}  
+};
 
-const updateUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
+export const getSingleUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const {email}=req.body.auth;
-        const {newPassword}=req.body;
-
-        if(!newPassword){
-            return res.json({message:"New Password was not entered"});
+        const id = req.params.id;
+        if (!id) {
+            return res.json({ message: "ID is not sent in URL" });
         }
 
-        const [findPerson]:any=await sequelize.query("select * from users where email=?",{
-            replacements:[email]
-        })
-
-        console.log("findPerson ",findPerson);
-
-        const oldPassword=findPerson[0].password;
-
-        if(oldPassword==newPassword){
-            return res.json({message:"Old Password and New Password Can not be same"});
+        const user = await UserRespository.getUserById(Number(id));
+        if (user.length === 0) {
+            return res.json({ message: "User was not found with given ID" });
         }
 
-        const salt=bcrypt.genSaltSync(10);
-        const hashed_newPassword=bcrypt.hashSync(newPassword,salt);
-
-        const [updatePasswordPerson]=await sequelize.query("update users set password=? where email=?",{
-            replacements:[hashed_newPassword,email]
-        })
-
-        return res.json({message:"New Password made"});
+        return res.status(200).json(user);
     } catch (error) {
         next(error);
     }
-}  
+};
 
-const deleteUser=async(req:Request,res:Response,next:NextFunction):Promise<any>=>{
+export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const {email}=req.body;
+        const { email } = req.body.auth;
+        const { newPassword } = req.body;
 
-        const [foundPerson]=await sequelize.query("select * from users where email=?",{
-            replacements:[email]
-        })
-
-        if(foundPerson.length==0){
-            return res.json({message:"The person to delete was not found"});
+        if (!newPassword) {
+            return res.json({ message: "New Password was not entered" });
         }
 
-        const [deletePerson]=await sequelize.query("delete from users where email=?",{
-            replacements:[email]
-        })
+        const user:any = await UserRespository.getUserByEmail(email);
+        if (!user.length) {
+            return res.json({ message: "User not found" });
+        }
 
-        return res.status(200).json({message:"person was deleted successfully"});
+        const oldPassword:any = user[0].password;
+        if (bcrypt.compareSync(newPassword, oldPassword)) {
+            return res.json({ message: "Old Password and New Password cannot be the same" });
+        }
+
+        const salt = bcrypt.genSaltSync(10);
+        const hashed_newPassword = bcrypt.hashSync(newPassword, salt);
+        await UserRespository.updateUserPassword(email, hashed_newPassword);
+
+        return res.json({ message: "New Password updated successfully" });
     } catch (error) {
         next(error);
     }
-}  
+};
 
-export {
-    getAllUser,
-    loginUser,
-    signupUSer,
-    getSingleUser,
-    updateUser,
-    deleteUser
-}
+export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { email } = req.body;
+        const user = await UserRespository.getUserByEmail(email);
+        if (!user.length) {
+            return res.json({ message: "The person to delete was not found" });
+        }
+
+        await UserRespository.deleteUserByEmail(email);
+        return res.status(200).json({ message: "Person was deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
