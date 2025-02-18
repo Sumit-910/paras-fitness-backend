@@ -7,9 +7,12 @@ import { Request } from "express";
 import cors from "cors";
 import { ErrorHandler } from './middlewares/ErrorHandler';
 import swaggerDocs from './services/SwaggerConfig';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app: Express = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(cors({ origin: '*' }));
 
