@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { format } from "date-fns";
-import * as workoutRepo from "../repository/workoutRepo";
+import * as workoutRepo from "../repository/WorkoutRepo";
 
 const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {

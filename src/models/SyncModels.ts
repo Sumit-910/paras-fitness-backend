@@ -1,6 +1,6 @@
-import User from "./userModel";
-import Workout from "./workoutLoggingModel";
-import FitnessGoal from "./fitnessModel";
+import User from "./UserModel";
+import Workout from "./WorkoutLoggingModel";
+import FitnessGoal from "./FitnessModel";
 import FeedbackIssue from "./FeedbackIssueModel";
 
 const syncTables=async()=>{

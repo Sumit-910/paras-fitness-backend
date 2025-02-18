@@ -1,7 +1,7 @@
-import * as userController from "./userController";
-import * as workController from "./workController"
-import * as fitnessController from "./fitnessController"
-import * as issueController from "./issueController"
+import * as userController from "./UserController";
+import * as workController from "./WorkController"
+import * as fitnessController from "./FitnessController"
+import * as issueController from "./IssueController"
 
 export{
     userController,

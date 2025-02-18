@@ -1,6 +1,6 @@
-import userRoute from "./userRoute";
-import workRoute from "./workoutRoute";
-import fitnessRoute from "./fitnessRoute";
+import userRoute from "./UserRoute";
+import workRoute from "./WorkoutRoute";
+import fitnessRoute from "./FitnessRoute";
 
 import express from "express";
 

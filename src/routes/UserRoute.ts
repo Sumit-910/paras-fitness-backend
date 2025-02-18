@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { userController } from "../controllers/index";
 
-import authorisation from "../middlewares/authorisation";
+import authorisation from "../middlewares/Authorisation";
 
 const userRoute=Router();
 

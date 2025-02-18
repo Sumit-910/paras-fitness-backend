@@ -2,11 +2,11 @@ import express from 'express';
 import { Express } from 'express';
 import router from './routes/index';
 import sequelize from './db/index';
-import syncTables from './models/syncModels';
+import syncTables from './models/SyncModels';
 import { Request } from "express";
 import cors from "cors";
 import { errorHandler } from './errors';
-import swaggerDocs from './services/swaggerConfig';
+import swaggerDocs from './services/SwaggerConfig';
 
 const app: Express = express();
 const port = 3000;
