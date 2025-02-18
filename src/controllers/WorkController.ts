@@ -1,13 +1,16 @@
 import { Request, Response, NextFunction } from "express";
 import { format } from "date-fns";
 import * as workoutRepo from "../repository/WorkoutRepo";
+import { BadRequestError } from "../errors/BadRequest";
+import { NotFoundError } from "../errors/NotFound";
+import { ConflictError } from "../errors/ConflictError";
 
 const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const workouts = await workoutRepo.getAllWorkouts();
 
         if (!workouts.length) {
-            return res.status(404).json({ message: "No Data To Show in Workouts" });
+            throw new NotFoundError("No Data To Show in Workouts");
         }
 
         return res.status(200).json(workouts);
@@ -22,7 +25,7 @@ const getAllWorkoutByUser = async (req: Request, res: Response, next: NextFuncti
         const workouts = await workoutRepo.getWorkoutsByUser(id);
 
         if (!workouts.length) {
-            return res.json({ status: 404, message: "No Data To Show in Workouts By User" });
+            throw new NotFoundError("No Data To Show in Workouts By User");
         }
 
         return res.status(200).json(workouts);
@@ -37,13 +40,13 @@ const createWorkout = async (req: Request, res: Response, next: NextFunction): P
         const { exercise_type, duration, calories_burned, workout_date } = req.body;
 
         if (!exercise_type || !duration || !calories_burned || !workout_date) {
-            return res.status(400).json({ message: "Enter All The Fields" });
+            throw new BadRequestError("Enter All The Fields");
         }
 
         const existingExercise = await workoutRepo.findWorkout(id, workout_date, exercise_type);
 
         if (existingExercise.length > 0) {
-            return res.status(400).json({ message: "You have already added this exercise today" });
+            throw new ConflictError("You have already added this exercise today");
         }
 
         await workoutRepo.createWorkout(id, exercise_type, duration, calories_burned, workout_date);
@@ -59,13 +62,13 @@ const getSingleWorkout = async (req: Request, res: Response, next: NextFunction)
         const { workout_id } = req.params;
 
         if (!workout_id) {
-            return res.status(400).json({ message: "Enter All The Fields" });
+            throw new BadRequestError("Workout ID is required");
         }
 
         const workout = await workoutRepo.getWorkoutById(parseInt(workout_id));
 
         if (!workout.length) {
-            return res.status(404).json({ message: `Workout with workout_id=${workout_id} was not found` });
+            throw new NotFoundError(`Workout with workout_id=${workout_id} was not found`);
         }
 
         return res.status(200).json(workout[0]);
@@ -80,7 +83,7 @@ const updateWorkout = async (req: Request, res: Response, next: NextFunction): P
         const { workout_id, exercise_type, duration, calories_burned, workout_date } = req.body;
 
         if (!workout_id || !exercise_type || !duration || !calories_burned || !workout_date) {
-            return res.status(400).json({ message: "Enter All The Fields" });
+            throw new BadRequestError("Enter All The Fields");
         }
 
         const formattedDate = format(new Date(workout_date), "yyyy-MM-dd");
@@ -99,7 +102,7 @@ const deleteWorkout = async (req: Request, res: Response, next: NextFunction): P
         const { workout_id } = req.body;
 
         if (!workout_id) {
-            return res.status(400).json({ message: "Workout ID is required" });
+            throw new BadRequestError("Workout ID is required");
         }
 
         await workoutRepo.deleteWorkout(id, workout_id);

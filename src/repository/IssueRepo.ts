@@ -33,3 +33,20 @@ export const deleteFeedbackIssue = async (issueId: number) => {
         throw new Error("Error deleting feedback issue: " + error);
     }
 };
+
+export const getFeedbackIssue = async (issueId: number) => {
+    try {
+        const [issue]: any[] = await sequelize.query(
+            "SELECT * FROM feedback_issues WHERE issue_id = ?",
+            { replacements: [issueId] }
+        );
+
+        if (issue.length === 0) {
+            return null; 
+        }
+
+        return issue[0]; 
+    } catch (error) {
+        throw new Error("Error fetching feedback issue: " + error);
+    }
+};

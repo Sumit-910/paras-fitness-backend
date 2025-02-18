@@ -5,7 +5,7 @@ import sequelize from './db/index';
 import syncTables from './models/SyncModels';
 import { Request } from "express";
 import cors from "cors";
-import { errorHandler } from './errors';
+import { ErrorHandler } from './middlewares/ErrorHandler';
 import swaggerDocs from './services/SwaggerConfig';
 
 const app: Express = express();
@@ -17,7 +17,7 @@ app.use(express.json());
 
 swaggerDocs(app);
 
-app.use(errorHandler);
+app.use(ErrorHandler);
 app.use('/', router);
 
 app.listen(port, () => {
