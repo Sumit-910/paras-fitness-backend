@@ -53,19 +53,19 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             throw new BadRequestError("Enter All The Fields");
         }
 
-        const user: any = await UserRespository.getUserByEmail(email);
+        const [user]: any = await UserRespository.getUserByEmail(email);
         if (user.length === 0) {
             throw new NotFoundError("Enter Correct Email");
         }
 
-        const validPassword = await bcrypt.compare(password, user[0].password);
+        const validPassword = bcrypt.compare(password, user[0].password);
         if (!validPassword) {
             throw new UnauthorizedError("Invalid Credentials");
         }
 
         const token = jwt.sign(
             { id: user[0].user_id, email: user[0].email },
-            process.env.JWT_SECRET!,
+            process.env.JWT_SECRET! as string,
             { expiresIn: "8h" }
         );
 
