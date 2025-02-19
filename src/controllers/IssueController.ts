@@ -3,6 +3,7 @@ import * as IssueRepo from "../repository/IssueRepo";
 import { BadRequestError } from "../errors/BadRequest";
 import { NotFoundError } from "../errors/NotFound";
 
+// Create a new feedback issue
 const createIssue = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -19,6 +20,7 @@ const createIssue = async (req: Request, res: Response, next: NextFunction): Pro
     }
 };
 
+// Update the status of an existing feedback issue
 const updateIssue = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { issue_id, status } = req.body;
@@ -39,6 +41,7 @@ const updateIssue = async (req: Request, res: Response, next: NextFunction): Pro
     }
 };
 
+// Delete an existing feedback issue
 const deleteIssue = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { issue_id } = req.body;

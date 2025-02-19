@@ -5,6 +5,7 @@ import { BadRequestError } from "../errors/BadRequest";
 import { NotFoundError } from "../errors/NotFound";
 import { ConflictError } from "../errors/ConflictError";
 
+//Fetch all workouts from the database.
 const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const workouts = await workoutRepo.getAllWorkouts();
@@ -19,6 +20,7 @@ const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+//Fetch all workouts for a specific user.
 const getAllWorkoutByUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -34,6 +36,7 @@ const getAllWorkoutByUser = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
+//Create a new workout entry for a user.
 const createWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -57,6 +60,7 @@ const createWorkout = async (req: Request, res: Response, next: NextFunction): P
     }
 };
 
+//Fetch a single workout entry by its ID.
 const getSingleWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { workout_id } = req.params;
@@ -77,6 +81,7 @@ const getSingleWorkout = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
+//Update an existing workout entry.
 const updateWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -96,6 +101,7 @@ const updateWorkout = async (req: Request, res: Response, next: NextFunction): P
     }
 };
 
+//Delete a workout entry by its ID.
 const deleteWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;

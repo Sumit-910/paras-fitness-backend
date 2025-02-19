@@ -1,13 +1,12 @@
 import { Request,Response,NextFunction } from "express";
 import jwt from "jsonwebtoken"
 
+
+// Middleware for authorization
 const authorisation=async(req:Request,res:Response,next:NextFunction)=>{
     try {
-        // console.log("headers ",req.headers);
 
         const auth:any=req.headers.authorization;
-
-        // console.log("authe ",auth);
 
         if(!auth || !auth.startsWith("Bearer ")){
             throw new Error("Token Not Provided Properly")

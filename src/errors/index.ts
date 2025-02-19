@@ -5,6 +5,8 @@ import {BadRequestError} from './BadRequest';
 import { InternalServerError } from './InternalServerError';
 import { ConflictError } from './ConflictError';
 
+
+//exporting all the custom errors
 export {
   CustomError,
   UnauthorizedError,

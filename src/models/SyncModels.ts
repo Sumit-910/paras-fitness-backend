@@ -3,6 +3,7 @@ import Workout from "./WorkoutLoggingModel";
 import FitnessGoal from "./FitnessModel";
 import FeedbackIssue from "./FeedbackIssueModel";
 
+//Syncing All The Models Created
 const syncTables=async()=>{
     await User.sync({alter: true});
     console.log('User Table synced successfully.');

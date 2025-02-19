@@ -9,6 +9,7 @@ import { ConflictError } from "../errors/ConflictError";
 import { UnauthorizedError } from "../errors/Unauthorized";
 dotenv.config();
 
+// Retrieve all users from the database
 export const getAllUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const users = await UserRespository.getAllUsers();
@@ -21,6 +22,7 @@ export const getAllUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+// Register a new user
 export const signupUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { name, email, password, phone, address } = req.body;
@@ -43,6 +45,7 @@ export const signupUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+// Authenticate a user and generate a JWT token
 export const loginUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { email, password } = req.body;
@@ -72,6 +75,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     }
 };
 
+// Retrieve a single user by their ID
 export const getSingleUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const id = req.params.id;
@@ -79,7 +83,7 @@ export const getSingleUser = async (req: Request, res: Response, next: NextFunct
             throw new BadRequestError("ID is not sent in URL");
         }
 
-        const user = await UserRespository.getUserById(Number(id));
+        const user: any = await UserRespository.getUserById(Number(id));
         if (user.length === 0) {
             throw new NotFoundError(`User was not found with given ID`);
         }
@@ -90,6 +94,7 @@ export const getSingleUser = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+// Update the password of an existing user
 export const updateUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { email } = req.body.auth;
@@ -119,6 +124,7 @@ export const updateUser = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+// Delete a user from the system
 export const deleteUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { email } = req.body;

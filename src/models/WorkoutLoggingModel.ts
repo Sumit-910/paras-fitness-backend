@@ -2,6 +2,8 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../db/index';
 import User from './UserModel';
 
+
+//Workout Logging Model
 const Workout = sequelize.define('Workout', {
   workout_id: {
     type: DataTypes.INTEGER,

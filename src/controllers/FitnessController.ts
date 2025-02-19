@@ -3,6 +3,7 @@ import * as fitnessGoalsRepo from "../repository/FitnessRep";
 import { BadRequestError } from "../errors/BadRequest";
 import { NotFoundError } from "../errors/NotFound";
 
+// Fetch all fitness goals for the authenticated user
 const getAllFitnessGoals = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -18,6 +19,7 @@ const getAllFitnessGoals = async (req: Request, res: Response, next: NextFunctio
     }
 };
 
+// Create a new fitness goal for the authenticated user
 const createFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.body.auth;
@@ -35,6 +37,7 @@ const createFitnessGoal = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+// Get details of a single fitness goal
 const getSingleFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { goal_id } = req.params;
@@ -55,6 +58,7 @@ const getSingleFitnessGoal = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+// Update an existing fitness goal
 const updateFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { goal_id, target_value, current_progress, status } = req.body;
@@ -71,6 +75,7 @@ const updateFitnessGoal = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+// Delete a fitness goal
 const deleteFitnessGoal = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
         const { id } = req.params;

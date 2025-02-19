@@ -2,6 +2,8 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../db/index';
 import User from './UserModel';
 
+
+//Feedback Model
 const FeedbackIssue = sequelize.define('FeedbackIssue', {
   issue_id: {
     type: DataTypes.INTEGER,
