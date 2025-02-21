@@ -12,7 +12,7 @@ dotenv.config();
 // Retrieve all users from the database
 export const getAllUser = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        const users = await UserRespository.getAllUsers();
+        const [users] = await UserRespository.getAllUsers();
         if (!users.length) {
             throw new NotFoundError("No Data To Show in Users");
         }
@@ -30,7 +30,8 @@ export const signupUser = async (req: Request, res: Response, next: NextFunction
             throw new BadRequestError("Enter All The Fields");
         }
 
-        const existingUser = await UserRespository.getUserByEmail(email);
+        const [existingUser] = await UserRespository.getUserByEmail(email);
+        console.log("exisiting user",existingUser);
         if (existingUser.length > 0) {
             throw new ConflictError("User with this email already exists");
         }
@@ -139,3 +140,6 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
+
+

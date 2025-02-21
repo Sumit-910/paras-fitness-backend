@@ -8,11 +8,15 @@ const authorisation=async(req:Request,res:Response,next:NextFunction)=>{
 
         const auth:any=req.headers.authorization;
 
+        // console.log("auth",auth);
+
         if(!auth || !auth.startsWith("Bearer ")){
             throw new Error("Token Not Provided Properly")
         }
 
         const token=auth.split(" ")[1];
+
+        // console.log("token",token);
 
         try {
             const decoded=jwt.verify(token,process.env.JWT_SECRET as string);

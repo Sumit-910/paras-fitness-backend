@@ -2,7 +2,7 @@ import sequelize from "../db";
 
 // Get all workouts
 export const getAllWorkouts = async (): Promise<any> => {
-    const [workouts]: any = await sequelize.query("SELECT * FROM workouts");
+    const [workouts]: any = await sequelize.query("select name , exercise_type ,duration,calories_burned from users inner join workouts on users.user_id=workouts.user_id;");
     return workouts;
 };
 

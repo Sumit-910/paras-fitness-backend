@@ -8,6 +8,7 @@ import { ConflictError } from "../errors/ConflictError";
 //Fetch all workouts from the database.
 const getAllWorkoutByAll = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+
         const workouts = await workoutRepo.getAllWorkouts();
 
         if (!workouts.length) {
@@ -39,6 +40,7 @@ const getAllWorkoutByUser = async (req: Request, res: Response, next: NextFuncti
 //Create a new workout entry for a user.
 const createWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+
         const { id } = req.body.auth;
         const { exercise_type, duration, calories_burned, workout_date } = req.body;
 
@@ -84,6 +86,7 @@ const getSingleWorkout = async (req: Request, res: Response, next: NextFunction)
 //Update an existing workout entry.
 const updateWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+
         const { id } = req.body.auth;
         const { workout_id, exercise_type, duration, calories_burned, workout_date } = req.body;
 
@@ -104,6 +107,7 @@ const updateWorkout = async (req: Request, res: Response, next: NextFunction): P
 //Delete a workout entry by its ID.
 const deleteWorkout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+
         const { id } = req.body.auth;
         const { workout_id } = req.body;
 
@@ -119,4 +123,83 @@ const deleteWorkout = async (req: Request, res: Response, next: NextFunction): P
     }
 };
 
-export { getAllWorkoutByAll, createWorkout, getSingleWorkout, updateWorkout, deleteWorkout, getAllWorkoutByUser };
+
+// Fetch current workout streak for a user
+const getWorkoutStreak = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { id } = req.body.auth;
+        console.log("id ", id);
+
+        const workouts = await workoutRepo.getWorkoutsByUser(id);
+
+        if (!workouts.length) return res.status(200).json({ streak: 0 });
+
+        // Sort workouts by date (ascending)
+        const sortedWorkouts = workouts.sort((a: any, b: any) => 
+            new Date(a.workout_date).getTime() - new Date(b.workout_date).getTime()
+        );
+
+        let streak = 0;
+
+        // Set today's date to midnight for accurate day difference
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Start from the latest workout
+        for (let i = sortedWorkouts.length - 1; i >= 0; i--) {
+            const workoutDate = new Date(sortedWorkouts[i].workout_date);
+            workoutDate.setHours(0, 0, 0, 0); // Normalize workout date
+
+            const diffDays = Math.floor((today.getTime() - workoutDate.getTime()) / (1000 * 3600 * 24));
+
+            if (diffDays === 0 || diffDays === streak) {
+                streak++;
+            } else if (diffDays > streak) {
+                break;
+            }
+        }
+
+        return res.status(200).json({ streak });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// Fetch workouts for a specific month
+const getMonthlyWorkouts = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const { id } = req.body.auth;
+        const { year, month } = req.query;
+
+        console.log("year", year);
+
+        const startDate = new Date(`${year}-${month}-01`);
+        const endDate = new Date(
+            Number(year ?? new Date().getFullYear()), 
+            Number(month ?? new Date().getMonth() + 1), 
+            0
+        );
+
+        const workouts = await workoutRepo.getWorkoutsByUser(id);
+
+        const monthlyWorkouts = workouts
+            .filter((workout: { workout_date: string | number | Date; }) => {
+                const workoutDate = new Date(workout.workout_date);
+                return workoutDate >= startDate && workoutDate <= endDate;
+            })
+            .map((workout: any) => ({
+                ...workout,
+                workout_date: new Date(workout.workout_date).toISOString().split('T')[0] // Format to yyyy-mm-dd
+            }));
+
+        return res.status(200).json(monthlyWorkouts);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+export { getAllWorkoutByAll, createWorkout, getSingleWorkout, updateWorkout, deleteWorkout, getAllWorkoutByUser,getWorkoutStreak, getMonthlyWorkouts };
+

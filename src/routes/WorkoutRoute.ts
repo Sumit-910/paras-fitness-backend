@@ -183,4 +183,11 @@ workRoute.patch("/workouts", [authorisation], workController.updateWorkout);
  */
 workRoute.delete("/workouts", [authorisation], workController.deleteWorkout);
 
+
+
+workRoute.get("/streaks",[authorisation],workController.getWorkoutStreak);
+
+
+workRoute.get("/days",[authorisation],workController.getMonthlyWorkouts)
+
 export default workRoute;

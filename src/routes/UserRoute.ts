@@ -20,6 +20,44 @@ const userRoute=Router();
  *   description: User management and profile operations
  */
 
+
+/**
+ * @swagger
+ * /workouts:
+ *   get:
+ *     summary: Get all workouts
+ *     tags: [Workouts]
+ *     description: Retrieve a list of all workouts.
+ *     responses:
+ *       200:
+ *         description: A list of workouts.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "12345"
+ *                   name:
+ *                     type: string
+ *                     example: "Full Body Workout"
+ *                   duration:
+ *                     type: number
+ *                     example: 60
+ *                   difficulty:
+ *                     type: string
+ *                     example: "Intermediate"
+ *       404:
+ *         description: No Data To Show in Workouts.
+ *       500:
+ *         description: Internal server error.
+ */
+
+userRoute.get("/all/users",[],userController.getAllUser);
+
 /**
  * @swagger
  * /auth/login:
