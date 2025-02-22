@@ -4,6 +4,8 @@ import { userController } from "../controllers/index";
 
 import authorisation from "../middlewares/Authorisation";
 
+import upload from "../middlewares/Multer";
+
 const userRoute=Router();
 
 /**
@@ -165,7 +167,7 @@ userRoute.get('/users', [], userController.getAllUser);
  *       500:
  *         description: Internal server error.
  */
-userRoute.get("/users/:id", [], userController.getSingleUser);
+userRoute.get("/single/users/", [authorisation], userController.getUserProfile);
 
 /**
  * @swagger
@@ -217,6 +219,8 @@ userRoute.patch("/users", [authorisation], userController.updateUser);
  *         description: Internal server error.
  */
 userRoute.delete("/users", [], userController.deleteUser);
+
+userRoute.post('/users/photo',upload.single('photo'),userController.uploadProfilePhoto)
 
 
 export default userRoute;

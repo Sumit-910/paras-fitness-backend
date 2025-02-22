@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { ErrorHandler } from './middlewares/ErrorHandler';
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import path from 'path';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -42,6 +43,8 @@ app.use('/', router);
 
 // Global error-handling middleware (must be after routes for proper handling)
 app.use(ErrorHandler);
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Start the Express server and listen on the defined port
 app.listen(port, () => {

@@ -40,3 +40,11 @@ export const deleteUserByEmail = async (email: string) => {
         replacements: [email],
     });
 };
+
+
+export const updateUserProfilePic = async (email: string, profilePic: string) => {
+    console.log("email repo",email);
+    return await sequelize.query('UPDATE users SET profile_pic = ? WHERE email = ?',{
+        replacements:[profilePic,email]
+    });
+};

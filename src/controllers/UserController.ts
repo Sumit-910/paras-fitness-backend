@@ -7,6 +7,8 @@ import { BadRequestError } from "../errors/BadRequest";
 import { NotFoundError } from "../errors/NotFound";
 import { ConflictError } from "../errors/ConflictError";
 import { UnauthorizedError } from "../errors/Unauthorized";
+import multer from 'multer';
+import path from 'path';
 dotenv.config();
 
 // Retrieve all users from the database
@@ -140,6 +142,50 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
+
+export const getUserProfile = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const {email} = req.body.auth;
+
+        const [user] = await UserRespository.getUserByEmail(email);
+        if (!user) throw new NotFoundError("User not found");
+
+        return res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+
+// -------------------
+// API to upload photo
+// -------------------
+export const uploadProfilePhoto = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        console.log("File received:", req.file);
+        console.log("Request body:", req.body);
+
+        const { email } = req.body;
+        const profilePic = req.file?.filename;
+
+        console.log("email aya yahan controller mai",email);
+
+        if (!profilePic) {
+            throw new BadRequestError("No file uploaded");
+        }
+
+        await UserRespository.updateUserProfilePic(email, profilePic);
+
+        return res.status(200).json({ message: "Profile photo updated", profilePic });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 
 
