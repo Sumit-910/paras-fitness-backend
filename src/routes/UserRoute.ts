@@ -220,7 +220,7 @@ userRoute.patch("/users", [authorisation], userController.updateUser);
  */
 userRoute.delete("/users", [], userController.deleteUser);
 
-userRoute.post('/users/photo',upload.single('photo'),userController.uploadProfilePhoto)
+// userRoute.post('/users/photo',upload.single('photo'),userController.uploadProfilePhoto)
 
 
 export default userRoute;
