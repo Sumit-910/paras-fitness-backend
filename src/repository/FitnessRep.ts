@@ -53,3 +53,9 @@ export const deleteFitnessGoal = async (goalId: number): Promise<void> => {
         { replacements: [goalId] }
     );
 };
+
+export const getAllFitnesswithUsername=async():Promise<void>=>{
+    const [goals]:any=await sequelize.query("select * from fitness_goals inner join users on fitness_goals.user_id=users.user_id")
+
+    return goals;
+}

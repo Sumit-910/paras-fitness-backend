@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import * as fitnessGoalsRepo from "../repository/FitnessRep";
 import { BadRequestError } from "../errors/BadRequest";
 import { NotFoundError } from "../errors/NotFound";
+import cron from "node-cron";
+import { sendEmail } from "../services/nodeMailer";
 
 // Fetch all fitness goals for the authenticated user
 const getAllFitnessGoals = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -91,5 +93,31 @@ const deleteFitnessGoal = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
+// Cron Job: Send reminder emails 24 hours before end_date
+cron.schedule("0 * * * *", async () => { // Runs every hour
+    try {
+        const allGoals:any = await fitnessGoalsRepo.getAllFitnesswithUsername(); // Fetch all fitness goals
+
+        const now = new Date();
+        allGoals.forEach(async (goal:any) => {
+            const endDate = new Date(goal.end_date);
+            const timeDiff = endDate.getTime() - now.getTime();
+            const hoursLeft = timeDiff / (1000 * 60 * 60);
+
+            if (goal.status === "pending" && hoursLeft <= 24 && hoursLeft > 23) {
+                await sendEmail(
+                    "Fitness App",
+                    goal.name,
+                    goal.email,
+                    "Your current progress is: " + goal.current_progress
+                );
+                console.log(`Reminder email sent to ${goal.user_email}`);
+            }
+        });
+    } catch (error) {
+        console.error("Error sending reminder emails:", error);
+    }
+});
 
 export { getAllFitnessGoals, createFitnessGoal, getSingleFitnessGoal, updateFitnessGoal, deleteFitnessGoal };
